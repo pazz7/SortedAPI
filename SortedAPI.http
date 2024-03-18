@@ -1,0 +1,10 @@
+@SortedAPI_HostAddress = https://localhost:7007
+
+GET {{SortedAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{SortedAPI_HostAddress}}/weatherforecast
+
+###
