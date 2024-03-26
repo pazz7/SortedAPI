@@ -1,8 +1,11 @@
 ﻿namespace Sorted.Domain.Rainfall
 {
+    /// <summary>
+    /// Details of a rainfall reading 
+    /// </summary>
     public class RainfallReading
     {
-        public string dateMeasured { get; set; }
+        public DateTime dateMeasured { get; set; }
         public decimal amountMeasured { get; set; }
     }
 }

@@ -1,8 +1,10 @@
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Sorted.Application;
 using Sorted.Domain.Interfaces;
 using Sorted.Infrastructure.Services;
 using Sorted.Infrastructure.Services.Requester;
+using SortedAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,17 @@ builder.Services.AddSingleton<IApiRequester, ApiRequester>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(setup => setup.SwaggerDoc("v1", new OpenApiInfo()
+{
+    Description = "An API which provides rainfall reading data",
+    Title = "Rainfall Api",
+    Version = "v1",
+    Contact = new OpenApiContact()
+    {
+        Name = "Sorted",
+        Url = new Uri("https://www.sorted.com")
+    }
+}));
 
 var app = builder.Build();
 
@@ -30,10 +43,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.Run();

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sorted.Domain.Rainfall
+﻿namespace Sorted.Domain.Rainfall
 {
+    /// <summary>
+    ///  A list of rainfall readings successfully retrieved
+    /// </summary>
     public class RainfallReadingResponse
     {
         public RainfallReading[] readings { get; set; }

@@ -23,6 +23,6 @@
         public string id { get; set; }
         public DateTime dateTime { get; set; }
         public string measure { get; set; }
-        public float value { get; set; }
+        public decimal value { get; set; }
     }
 }
