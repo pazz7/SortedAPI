@@ -34,7 +34,6 @@ namespace SortedAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Error))]
         public async Task<IActionResult> GetRainfall(string stationId, [Range(1, 100)] int count = 10)
         {
-            //logger.LogInformation($"Get top {count} sorted rainfall readings of Station {stationId}");
             RainfallReadingResponse response = await getRainfallReadingsByStationIdUseCase.ExecuteAsync(stationId, count);
             if(response == null || response.Readings.Length == 0) 
                 return NotFound(new Error() { Message = "No readings found for the specified stationId" });
