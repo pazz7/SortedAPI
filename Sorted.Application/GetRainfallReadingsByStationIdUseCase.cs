@@ -7,12 +7,11 @@ namespace Sorted.Application
     {
         public async Task<RainfallReadingResponse> ExecuteAsync(string stationId, int count)
         {
-            RainfallReadingResponse response = new() { readings = [] };
+            RainfallReadingResponse response = new() { Readings = [] };
 
             var items = await rainfallService.GetAllReadingsByStationIdAsync(stationId, count);
-            response.readings = items.Select(i => new RainfallReading() { dateMeasured = i.dateTime, amountMeasured = i.value }).ToArray();
+            response.Readings = items.Select(i => new RainfallReading() { DateMeasured = i.dateTime, AmountMeasured = i.value }).ToArray();
             return response;
         }
     }
 }
-

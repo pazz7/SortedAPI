@@ -36,7 +36,7 @@ namespace SortedAPI.Controllers
         {
             //logger.LogInformation($"Get top {count} sorted rainfall readings of Station {stationId}");
             RainfallReadingResponse response = await getRainfallReadingsByStationIdUseCase.ExecuteAsync(stationId, count);
-            if(response == null || response.readings.Length == 0) 
+            if(response == null || response.Readings.Length == 0) 
                 return NotFound(new Error() { Message = "No readings found for the specified stationId" });
 
             return Ok(response);
