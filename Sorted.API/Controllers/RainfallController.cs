@@ -10,12 +10,9 @@ namespace SortedAPI.Controllers
     /// An API which provides rainfall reading data
     /// </summary>
     /// <param name="getRainfallReadingsByStationIdUseCase"></param>
-    /// <param name="logger"></param>
     [Route("/rainfall")]
     [ApiController]
-    public class RainfallController(
-        GetRainfallReadingsByStationIdUseCase getRainfallReadingsByStationIdUseCase,
-        ILogger<RainfallController> logger) : ControllerBase
+    public class RainfallController(GetRainfallReadingsByStationIdUseCase getRainfallReadingsByStationIdUseCase) : ControllerBase
     {
         /// <summary>
         /// Get rainfall readings by station Id 
@@ -32,10 +29,12 @@ namespace SortedAPI.Controllers
         [HttpGet("id/{stationId}/readings")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RainfallReadingResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Error))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Error))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Error))]
-        public async Task<ActionResult<RainfallReadingResponse>> GetRainfall(string stationId, [Range(1, 100)] int count = 10)
+        public async Task<IActionResult> GetRainfall(string stationId, [Range(1, 100)] int count = 10)
         {
+            //logger.LogInformation($"Get top {count} sorted rainfall readings of Station {stationId}");
             RainfallReadingResponse response = await getRainfallReadingsByStationIdUseCase.ExecuteAsync(stationId, count);
             if(response == null || response.readings.Length == 0) 
                 return NotFound(new Error() { Message = "No readings found for the specified stationId" });
