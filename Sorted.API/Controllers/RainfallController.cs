@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sorted.Application;
+using Sorted.Domain;
 using Sorted.Domain.Rainfall;
-using SortedAPI.Domain;
-using System.ComponentModel.DataAnnotations;
 
 namespace SortedAPI.Controllers
 {
@@ -29,16 +28,47 @@ namespace SortedAPI.Controllers
         [HttpGet("id/{stationId}/readings")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RainfallReadingResponse))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Error))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Error))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Error))]
-        public async Task<IActionResult> GetRainfall(string stationId, [Range(1, 100)] int count = 10)
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ErrorResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ErrorResponse))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(ErrorResponse))]
+        public async Task<IActionResult> GetRainfall(string stationId, int count = 10)
         {
-            RainfallReadingResponse response = await getRainfallReadingsByStationIdUseCase.ExecuteAsync(stationId, count);
-            if(response == null || response.Readings.Length == 0) 
-                return NotFound(new Error() { Message = "No readings found for the specified stationId" });
+            var validationResult = ValidateParams(count);
 
-            return Ok(response);
+            if (((ObjectResult)validationResult).StatusCode == 200)
+            {
+                RainfallReadingResponse response = await getRainfallReadingsByStationIdUseCase.ExecuteAsync(stationId, count);
+
+                if (response == null || response.Readings.Length == 0)
+                {
+                    return NotFound(new ErrorResponse() { Error = new() { Message = "No readings found for the specified stationId" } });
+                }
+
+                return Ok(response); 
+            }
+            else
+                return validationResult;
+        }
+
+        private IActionResult ValidateParams(int count)
+        {
+            if (count < 1 || count > 100)
+            {
+                return BadRequest(new ErrorResponse()
+                {
+                    Error = new()
+                    {
+                        Message = "Invalid value.",
+                        Details = [new()
+                        {
+                            PropertyName = "count",
+                            Message = "The field count must be between 1 and 100."
+                        }]
+                    }
+                });
+            }
+            else
+                return Ok(string.Empty);
         }
     }
 }

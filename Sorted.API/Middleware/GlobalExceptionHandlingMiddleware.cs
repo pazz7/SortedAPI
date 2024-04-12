@@ -1,5 +1,5 @@
 ﻿using Serilog;
-using SortedAPI.Domain;
+using Sorted.Domain;
 using System.Net;
 using System.Text.Json;
 
@@ -28,21 +28,21 @@ namespace SortedAPI.Middleware
         {
             context.Response.ContentType = "application/json";
             var response = context.Response;
-            Error errorResponse = new();
+            ErrorResponse errorResponse = new(); 
 
             switch (exception)
             {
                 case HttpRequestException:
-                    errorResponse.Message = "Invalid request";
+                    errorResponse.Error = new() { Message = "Invalid request" };
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
                 case ApplicationException:
-                    errorResponse.Message = "Invalid request";
-                    response.StatusCode = (int)HttpStatusCode.BadRequest; 
+                    errorResponse.Error = new() { Message = "Invalid request" };
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
                     break;
                 default:
+                    errorResponse.Error = new() { Message = "Internal server error" };
                     response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    errorResponse.Message = "Internal server error";
                     break;
             }
             var exceptionResult = JsonSerializer.Serialize(errorResponse);
